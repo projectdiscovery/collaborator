@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 	"github.com/phayes/freeport"
 )
 
@@ -31,7 +33,16 @@ func dumpBIID(stop *bool) string {
 			return ""
 		}
 
-		tcpConn.ReadFrom(data)
-		biid = extractbiid(data)
+		n, _, err := tcpConn.ReadFrom(data)
+		if err != nil {
+			continue
+		}
+		packet := gopacket.NewPacket(data[:n], layers.LayerTypeTCP, gopacket.Default)
+		if !checkPacket(packet) {
+			continue
+		}
+
+		applicationLayer := packet.ApplicationLayer()
+		biid = extractbiid(applicationLayer.Payload())
 	}
 }

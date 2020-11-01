@@ -4,11 +4,15 @@ import (
 	"bytes"
 	"fmt"
 	"time"
+
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 )
 
 const (
 	privateKeyPattern     = "burpresults?biid="
 	snaplen               = 1600
+	dstPort               = 80
 	ebpFilter             = "tcp and dst port 80"
 	externalIpProbeTarget = "8.8.8.8"
 )
@@ -42,4 +46,23 @@ func Intercept(timeout time.Duration) (string, error) {
 		stop = true
 		return "", fmt.Errorf("Timeout")
 	}
+}
+
+func checkPacket(packet gopacket.Packet) bool {
+	if packet == nil {
+		return false
+	}
+	if packet.NetworkLayer() == nil || packet.TransportLayer() == nil || packet.TransportLayer().LayerType() != layers.LayerTypeTCP || packet.ApplicationLayer() == nil {
+		return false
+	}
+
+	tcp, ok := packet.TransportLayer().(*layers.TCP)
+	if !ok {
+		return false
+	}
+	if tcp.DstPort != layers.TCPPort(dstPort) {
+		return false
+	}
+
+	return true
 }

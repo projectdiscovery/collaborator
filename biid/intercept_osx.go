@@ -1,4 +1,4 @@
-// +build darwin
+//// +build darwin
 
 package collaborator
 
@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 )
 
@@ -30,7 +29,7 @@ func dumpBIID(stop *bool) string {
 	}
 	defer handle.Close()
 
-	err = handle.SetBPFFilter(filter)
+	err = handle.SetBPFFilter(ebpFilter)
 	if err != nil {
 		return ""
 	}
@@ -46,10 +45,7 @@ func dumpBIID(stop *bool) string {
 		}
 		select {
 		case packet := <-packets:
-			if packet == nil {
-				continue
-			}
-			if packet.NetworkLayer() == nil || packet.TransportLayer() == nil || packet.TransportLayer().LayerType() != layers.LayerTypeTCP || packet.ApplicationLayer() == nil {
+			if !checkPacket(packet) {
 				continue
 			}
 
