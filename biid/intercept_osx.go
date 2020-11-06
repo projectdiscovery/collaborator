@@ -1,6 +1,6 @@
 // +build darwin
 
-package collaborator
+package biid
 
 import (
 	"fmt"

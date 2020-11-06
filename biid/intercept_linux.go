@@ -1,6 +1,6 @@
 // +build linux
 
-package collaborator
+package biid
 
 import (
 	"fmt"

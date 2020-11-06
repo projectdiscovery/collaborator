@@ -1,6 +1,6 @@
 // +build windows
 
-package collaborator
+package biid
 
 // requires root
 func dumpBIID(stop *bool) string {

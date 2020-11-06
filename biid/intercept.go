@@ -1,4 +1,4 @@
-package collaborator
+package biid
 
 import (
 	"bytes"
