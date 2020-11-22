@@ -114,13 +114,22 @@ func (b *BurpCollaborator) poll(id string) (*BurpHTTPResponse, error) {
 		return nil, err
 	}
 
+	var r *BurpResponse
 	for i := range burpHttpResp.Responses {
-		burpHttpResp.Responses[i].Data.RawRequestDecoded, _ = Base64Decode(burpHttpResp.Responses[i].Data.RawRequest)
-		burpHttpResp.Responses[i].Data.RequestDecoded, _ = Base64Decode(burpHttpResp.Responses[i].Data.Request)
-		burpHttpResp.Responses[i].Data.ResponseDecoded, _ = Base64Decode(burpHttpResp.Responses[i].Data.Response)
-		if burpHttpResp.Responses[i].Data.Type > 0 {
-			burpHttpResp.Responses[i].Data.RequestType = dns.TypeToString[uint16(burpHttpResp.Responses[i].Data.Type)]
+		r = &burpHttpResp.Responses[i]
+		r.Data.RawRequestDecoded, _ = Base64Decode(r.Data.RawRequest)
+		r.Data.RequestDecoded, _ = Base64Decode(r.Data.Request)
+		r.Data.ResponseDecoded, _ = Base64Decode(r.Data.Response)
+		if r.Data.Type > 0 {
+			r.Data.RequestType = dns.TypeToString[uint16(r.Data.Type)]
 		}
+		r.Data.SenderDecoded, _ = Base64Decode(r.Data.Sender)
+		for _, recipient := range r.Data.Recipients {
+			recipientbase64Decoded, _ := Base64Decode(recipient)
+			r.Data.RecipientsDecoded = append(r.Data.RecipientsDecoded, recipientbase64Decoded)
+		}
+		r.Data.MessageDecoded, _ = Base64Decode(r.Data.Message)
+		r.Data.ConversationDecoded, _ = Base64Decode(r.Data.Conversation)
 	}
 
 	b.Lock()
@@ -156,13 +165,21 @@ type BurpResponse struct {
 }
 
 type BurpResponseData struct {
-	SubDomain         string `json:"subDomain,omitempty"`
-	Type              int    `json:"type,omitempty"`
-	RequestType       string
-	RawRequest        string `json:"rawRequest,omitempty"`
-	RawRequestDecoded string
-	Request           string `json:"request,omitempty"`
-	RequestDecoded    string
-	Response          string `json:"response,omitempty"`
-	ResponseDecoded   string
+	SubDomain           string `json:"subDomain,omitempty"`
+	Type                int    `json:"type,omitempty"`
+	RequestType         string
+	RawRequest          string `json:"rawRequest,omitempty"`
+	RawRequestDecoded   string
+	Request             string `json:"request,omitempty"`
+	RequestDecoded      string
+	Response            string `json:"response,omitempty"`
+	ResponseDecoded     string
+	Sender              string `json:"sender,omitempty"`
+	SenderDecoded       string
+	Recipients          []string `json:"recipients,omitempty"`
+	RecipientsDecoded   []string
+	Message             string `json:"message,omitempty"`
+	MessageDecoded      string
+	Conversation        string `json:"conversation,omitempty"`
+	ConversationDecoded string
 }
