@@ -1,2 +1,5 @@
-cmd/collaborator/collaborator
+cmd/collab/collab
+cmd/intercept/intercept
+cacert.pem
+cakey.pem
 vendor
