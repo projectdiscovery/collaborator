@@ -22,17 +22,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test
-        run: go test .
-        working-directory: v2/cmd/intercept/
+        run: go test ./...
+        working-directory: .
       
-      - name: Test
-        run: go test .
-        working-directory: v2/cmd/collab/
-
-      - name: Build
+      - name: Build Intercept
         run: go build .
-        working-directory: v2/cmd/intercept/
+        working-directory: cmd/intercept/
 
-      - name: Build
+      - name: Build Collab
         run: go build .
-        working-directory: v2/cmd/collab/
+        working-directory: cmd/collab/

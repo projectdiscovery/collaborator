@@ -1,0 +1,37 @@
+env:
+  - GO111MODULE=on
+before:
+  hooks:
+    - go mod tidy
+project_name: intercept
+builds:
+  - id: intercept-darwin
+    ldflags:
+      - -s -w
+    binary: intercept
+    env:
+      - CGO_ENABLED=1
+    main: cmd/intercept/intercept.go
+    goos:
+      - darwin
+    goarch:
+      - amd64
+  - id: collab-darwin
+    ldflags:
+      - -s -w
+    binary: collab
+    env:
+      - CGO_ENABLED=1
+    main: cmd/collab/collab.go
+    goos:
+      - darwin
+    goarch:
+      - amd64
+
+archives:
+- format: zip
+  replacements:
+      darwin: macOS
+
+checksum:
+  name_template: "{{ .ProjectName }}-mac-checksums.txt"
