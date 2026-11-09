@@ -86,7 +86,7 @@ func (r *Runner) Run() error {
 					)
 					msg = rr.Replace(r.options.SMTPMessage)
 				}
-				gologger.Print().Msgf(msg)
+				gologger.Print().Msg(msg)
 			}
 		}
 		r.burpcollab.Empty()

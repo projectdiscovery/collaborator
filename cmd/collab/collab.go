@@ -39,8 +39,9 @@ func main() {
 		}()
 	}()
 
-	err = collabRunner.Run()
-	if err != nil {
+	// Run polls until it fails and never returns nil, which staticcheck
+	// reports as SA4023. Keep the check in case Run ever returns nil.
+	if err := collabRunner.Run(); err != nil { //nolint:staticcheck
 		gologger.Fatal().Msgf("Could not run collab: %s\n", err)
 	}
 }

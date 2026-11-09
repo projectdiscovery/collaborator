@@ -2,7 +2,7 @@ package collaborator
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"sync"
 	"time"
@@ -71,7 +71,7 @@ func (b *BurpCollaborator) Poll() error {
 		b.BurpURl = BURP_URL
 	}
 	for biid := range b.BIIDs {
-		b.poll(biid)
+		_, _ = b.poll(biid)
 	}
 
 	return nil
@@ -83,7 +83,7 @@ func (b *BurpCollaborator) PollEach(t time.Duration) {
 			return
 		}
 
-		b.Poll()
+		_ = b.Poll()
 	}
 }
 
@@ -102,11 +102,11 @@ func (b *BurpCollaborator) poll(id string) (*BurpHTTPResponse, error) {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var burpHttpResp BurpHTTPResponse
 	err = json.Unmarshal(data, &burpHttpResp)

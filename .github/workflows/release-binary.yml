@@ -14,9 +14,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
+        uses: projectdiscovery/actions/setup/go@v1
       - name: Install Dependences
         run: brew install libpcap
       - name: Run GoReleaser
@@ -35,9 +33,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
+        uses: projectdiscovery/actions/setup/go@v1
       - name: Install Dependences
         run: sudo apt install libpcap-dev
 
@@ -57,9 +53,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
+        uses: projectdiscovery/actions/setup/go@v1
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
