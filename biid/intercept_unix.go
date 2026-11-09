@@ -43,15 +43,13 @@ func dumpBIID(stop *bool) string {
 		if biid != "" {
 			return biid
 		}
-		select {
-		case packet := <-packets:
-			if !checkPacket(packet) {
-				continue
-			}
-
-			applicationLayer := packet.ApplicationLayer()
-			biid = extractbiid(applicationLayer.Payload())
+		packet := <-packets
+		if !checkPacket(packet) {
+			continue
 		}
+
+		applicationLayer := packet.ApplicationLayer()
+		biid = extractbiid(applicationLayer.Payload())
 	}
 }
 
@@ -67,7 +65,7 @@ func GetSourceIP(dstip net.IP) (net.IP, error) {
 		return nil, dialUpErr
 	}
 
-	defer con.Close()
+	defer func() { _ = con.Close() }()
 	if udpaddr, ok := con.LocalAddr().(*net.UDPAddr); ok {
 		return udpaddr.IP, nil
 	}
